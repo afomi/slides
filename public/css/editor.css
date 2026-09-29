@@ -34,6 +34,11 @@
   box-sizing: border-box;
 }
 
+/* Component display rules (e.g. .drawer { display: flex }) must not defeat the hidden attribute. */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
