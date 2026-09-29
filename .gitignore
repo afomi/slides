@@ -1,0 +1,11 @@
+node_modules/
+public/slides/
+public/images/
+*.resolved.yml
+public/sheets/
+public/decks
+public/.gstack/
+.DS_Store
+.ruby-lsp/
+.claude/settings.local.json
+public/manifest.json
