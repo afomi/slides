@@ -1,8 +1,9 @@
 // Slide editor: edits slide-decks/decks/*.json in place.
 //
-// Storage: FolderStore uses the File System Access API (Chromium) on the slide-decks folder, so
-// the browser, the IDE, Claude Code, and git all see one file. FileStore covers other browsers
-// (open one file, save downloads it) and the built-in sample.
+// Storage (File System Access API, Chromium): FileHandleStore edits one deck .json in place;
+// FolderStore opens slide-decks (or slide-decks/decks) to switch decks and resolve assets/.
+// Either way the browser, the IDE, Claude Code, and git see one file. FileStore covers other
+// browsers (Save downloads) and the built-in sample.
 // Rendering: SlidesEngine (engine-core.js) mirrors the Ruby templates; test/site_test.rb keeps
 // them pixel-identical. Overflow: measureOverflows (measure.js), shared with `rake slides:lint`.
 (function () {
@@ -50,17 +51,23 @@
 
   // ---------- Storage ----------
 
+  // Picked folder is the slide-decks repo (has decks/) or its decks/ folder (has *.json).
+  // Asset paths (assets/…) resolve from the repo root, so only the repo pick can preview images.
   class FolderStore {
-    constructor(dir) { this.dir = dir; this.label = dir.name; }
+    constructor(decks, assetsRoot, label) { this.decks = decks; this.assetsRoot = assetsRoot; this.label = label; }
 
-    async decksDir(create = false) {
-      return this.dir.getDirectoryHandle('decks', { create });
+    static async open(dir) {
+      const decks = await dir.getDirectoryHandle('decks').catch(() => null);
+      if (decks) return new FolderStore(decks, dir, dir.name);
+      for await (const entry of dir.values()) {
+        if (entry.kind === 'file' && entry.name.endsWith('.json')) return new FolderStore(dir, null, dir.name);
+      }
+      throw new Error(`No deck .json files in "${dir.name}". Pick slide-decks or slide-decks/decks.`);
     }
 
     async list() {
-      const decks = await this.decksDir();
       const names = [];
-      for await (const entry of decks.values()) {
+      for await (const entry of this.decks.values()) {
         if (entry.kind === 'file' && entry.name.endsWith('.json') && !entry.name.includes('.resolved.')) {
           names.push(entry.name.replace(/\.json$/, ''));
         }
@@ -69,15 +76,11 @@
     }
 
     async read(name) {
-      const file = await (await (await this.decksDir()).getFileHandle(`${name}.json`)).getFile();
-      return file.text();
+      return (await (await this.decks.getFileHandle(`${name}.json`)).getFile()).text();
     }
 
     async write(name, text, { create = false } = {}) {
-      const handle = await (await this.decksDir(create)).getFileHandle(`${name}.json`, { create });
-      const writable = await handle.createWritable();
-      await writable.write(text);
-      await writable.close();
+      await writeHandle(await this.decks.getFileHandle(`${name}.json`, { create }), text);
     }
 
     async exists(name) {
@@ -86,9 +89,10 @@
 
     // Repo-relative asset path (assets/x/y.png) → object URL, or null when missing.
     async assetUrl(path) {
+      if (!this.assetsRoot) return null;
       try {
         const parts = path.split('/').filter(Boolean);
-        let dir = this.dir;
+        let dir = this.assetsRoot;
         for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part);
         const file = await (await dir.getFileHandle(parts[parts.length - 1])).getFile();
         return URL.createObjectURL(file);
@@ -96,6 +100,30 @@
         return null;
       }
     }
+
+    get canPreviewAssets() { return !!this.assetsRoot; }
+    get canCreate() { return true; }
+  }
+
+  // One deck file picked with showOpenFilePicker; Save writes back to it.
+  class FileHandleStore {
+    constructor(handle) { this.handle = handle; this.name = handle.name.replace(/\.json$/, ''); this.label = handle.name; }
+    async list() { return [this.name]; }
+    async read() { return (await this.handle.getFile()).text(); }
+    async write(name, text) { await writeHandle(this.handle, text); }
+    async exists(name) { return name === this.name; }
+    async assetUrl() { return null; }
+    get canPreviewAssets() { return false; }
+    get canCreate() { return false; }
+  }
+
+  async function writeHandle(handle, text) {
+    if (handle.requestPermission && (await handle.queryPermission({ mode: 'readwrite' })) !== 'granted') {
+      if ((await handle.requestPermission({ mode: 'readwrite' })) !== 'granted') throw new Error('Write permission denied.');
+    }
+    const writable = await handle.createWritable();
+    await writable.write(text);
+    await writable.close();
   }
 
   class FileStore {
@@ -111,6 +139,8 @@
     }
     async exists(name) { return name === this.name; }
     async assetUrl() { return null; }
+    get canPreviewAssets() { return false; }
+    get canCreate() { return false; }
   }
 
   // ---------- Field access (keeps whatever key a deck already uses) ----------
@@ -191,7 +221,8 @@
     if (slide.image) {
       const url = await resolveAsset(slide.image);
       if (url) slide.image = url;
-      else addWarning(`Image not found in the decks folder: ${slide.image}`, true);
+      else if (isRelativeAsset(slide.image) && !state.store.canPreviewAssets) addWarning(`Image ${slide.image} resolves from the slide-decks folder. Use Open folder and pick slide-decks to preview it.`, false);
+      else addWarning(`Image not found in slide-decks: ${slide.image}`, true);
     }
     if (token !== renderToken) return;
     entry.missing.forEach((field) => addWarning(`Missing required field: ${LABELS[field] || field}`, true));
@@ -414,9 +445,14 @@
       $('status').textContent = `Not saved: ${error.message}`;
       return;
     }
-    await state.store.write(state.deckName, JSON.stringify(state.data, null, 2) + '\n');
+    try {
+      await state.store.write(state.deckName, JSON.stringify(state.data, null, 2) + '\n');
+    } catch (error) {
+      $('status').textContent = `Not saved: ${error.message}`;
+      return;
+    }
     setDirty(false);
-    $('status').textContent = `Saved decks/${state.deckName}.json at ${new Date().toLocaleTimeString()}`;
+    $('status').textContent = `Saved ${state.deckName}.json at ${new Date().toLocaleTimeString()}`;
     document.body.dataset.saved = String(Number(document.body.dataset.saved || 0) + 1);
   }
 
@@ -431,7 +467,7 @@
     state.selected = 0;
     state.assetUrls = new Map();
     setDirty(false);
-    $('status').textContent = `${state.store.label} / decks/${name}.json`;
+    $('status').textContent = state.store instanceof FolderStore ? `${state.store.label} / ${name}.json` : state.store.label;
     $('deck-select').value = name;
     renderBrandSelect();
     enableEditing();
@@ -443,7 +479,7 @@
     $('preview-frame').hidden = false;
     ['save', 'add-slide', 'add-template', 'brand-select', 'drawer-toggle', 'deck-select'].forEach((id) => { $(id).disabled = false; });
     $('brand-select').disabled = Array.isArray(state.data);
-    $('new-deck').disabled = !(state.store instanceof FolderStore);
+    $('new-deck').disabled = !state.store.canCreate;
     requestAnimationFrame(fitPreview);
   }
 
@@ -453,8 +489,8 @@
     const select = $('deck-select');
     select.replaceChildren(...names.map((name) => new Option(name, name)));
     if (names.length) await loadDeck(names[0]);
-    else $('status').textContent = `${store.label}: no decks/*.json yet`;
-    $('new-deck').disabled = !(store instanceof FolderStore);
+    else $('status').textContent = `${store.label}: no deck .json files yet`;
+    $('new-deck').disabled = !store.canCreate;
   }
 
   function renderBrandSelect() {
@@ -471,28 +507,43 @@
     $('add-template').replaceChildren(...Object.entries(ENGINE.templates).map(([key, spec]) => new Option(spec.label || key, key)));
     $('add-template').value = 'normal';
 
-    if (!window.showDirectoryPicker) {
+    if (!window.showOpenFilePicker) {
       $('open-folder').hidden = true;
-      $('open-file-label').hidden = false;
       $('no-fs-note').hidden = false;
     }
 
-    $('open-folder').addEventListener('click', async () => {
-      try {
-        const dir = await window.showDirectoryPicker({ id: 'slide-decks', mode: 'readwrite' });
-        await dir.getDirectoryHandle('decks', { create: false }).catch(() => {
-          throw new Error(`"${dir.name}" has no decks/ folder. Pick your slide-decks folder.`);
+    const confirmDiscard = () => !state.dirty || confirm('Discard unsaved changes?');
+    const opened = (promise) => promise.then(() => {}, (error) => {
+      if (error.name !== 'AbortError') $('status').textContent = error.message;
+    });
+
+    $('open-deck').addEventListener('click', () => {
+      if (!confirmDiscard()) return;
+      if (!window.showOpenFilePicker) return $('open-file').click();
+      opened((async () => {
+        const [handle] = await window.showOpenFilePicker({
+          id: 'slide-decks',
+          types: [{ description: 'Slide deck', accept: { 'application/json': ['.json'] } }]
         });
-        await useStore(new FolderStore(dir));
-      } catch (error) {
-        if (error.name !== 'AbortError') $('status').textContent = error.message;
-      }
+        state.dirty = false;
+        await useStore(new FileHandleStore(handle));
+      })());
+    });
+
+    $('open-folder').addEventListener('click', () => {
+      if (!confirmDiscard()) return;
+      opened((async () => {
+        const dir = await window.showDirectoryPicker({ id: 'slide-decks', mode: 'readwrite' });
+        state.dirty = false;
+        await useStore(await FolderStore.open(dir));
+      })());
     });
 
     $('open-file').addEventListener('change', async (event) => {
       const file = event.target.files[0];
       if (!file) return;
-      await useStore(new FileStore(file.name.replace(/\.json$/, ''), await file.text(), 'file'));
+      state.dirty = false;
+      await useStore(new FileStore(file.name.replace(/\.json$/, ''), await file.text(), file.name));
     });
 
     $('try-sample').addEventListener('click', () => useStore(new FileStore('sample', JSON.stringify(SAMPLE, null, 2) + '\n', 'sample')));

@@ -52,9 +52,21 @@ class EditorTest < Minitest::Test
 
       assert report['assetLoaded'], 'asset image did not load from the folder'
 
+      assert report['drawerHiddenAtStart'], 'drawer should start hidden'
+      assert report['drawerVisibleWhenOpen']
+      assert report['drawerHiddenAfterClose'], 'Close did not hide the drawer'
+
+      assert_equal 'fixture.json', report['openDeckStatus']
+      assert report['openDeckNewDeckDisabled'], 'New deck needs a folder'
+      assert_equal 'Saved through Open deck', report['afterOpenDeck']['slides'][0]['content']['heading']
+      assert_equal 4, report['afterOpenDeck']['slides'].length
+
+      assert_equal ['fixture'], report['decksDirDecks']
+      assert_match(/Use Open folder and pick slide-decks/, report['decksDirImageWarning'])
+
       # What the editor saved is a valid deck for the Ruby engine.
       deck = Slides::SlideGenerator.new(File.join(dir, 'decks', 'fixture.json'))
-      assert_equal 3, deck.slides.length
+      assert_equal 4, deck.slides.length
     end
   end
 end

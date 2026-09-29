@@ -24,23 +24,22 @@
       class="brand-title"
     >Slides</div>
     <button
-      id="open-folder"
+      id="open-deck"
       type="button"
       class="primary"
-    >Open decks folder</button>
-    <label
-      id="open-file-label"
-      class="button"
+      title="Open one deck .json file; Save writes back to it"
+    >Open deck</button>
+    <button
+      id="open-folder"
+      type="button"
+      title="Open slide-decks (or slide-decks/decks) to switch between decks and preview images"
+    >Open folder</button>
+    <input
+      id="open-file"
+      type="file"
+      accept=".json,application/json"
       hidden
     >
-      Open deck file
-      <input
-        id="open-file"
-        type="file"
-        accept=".json,application/json"
-        hidden
-      >
-    </label>
     <select
       id="deck-select"
       aria-label="Deck"
@@ -109,13 +108,14 @@
         class="welcome"
       >
         <h1>Slide editor</h1>
-        <p>Decks are JSON files; this page edits them in place.</p>
-        <p>Open your <code>slide-decks</code> folder to edit its <code>decks/*.json</code> on disk, the same files your IDE and git see.</p>
+        <p>Each deck is one JSON file, and they all sit together in <code>slide-decks/decks/</code>.</p>
+        <p><strong>Open deck</strong> edits one <code>.json</code> in place; Save writes back to that file, the same one your IDE and git see.</p>
+        <p><strong>Open folder</strong> (pick <code>slide-decks</code> or <code>slide-decks/decks</code>) lets you switch decks, create new ones, and preview images from <code>slide-decks/assets</code>.</p>
         <p
           id="no-fs-note"
           hidden
-        >This browser cannot write to local folders, so open a single deck file and saving downloads it.
-        Chrome, Edge, and Arc can edit the folder directly.</p>
+        >This browser cannot write to local files, so Save downloads the deck instead.
+        Chrome, Edge, and Arc save in place.</p>
         <button
           id="try-sample"
           type="button"
