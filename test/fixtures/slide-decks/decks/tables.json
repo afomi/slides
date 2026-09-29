@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "deck": {
+    "title": "Tables fixture"
+  },
+  "brand": "govcenter",
+  "slides": [
+    {
+      "template": "title",
+      "content": {
+        "title": "Tables",
+        "subtitle": "Fixture deck for engine tests"
+      }
+    },
+    {
+      "template": "normal",
+      "notes": "Notes are never rendered.",
+      "content": {
+        "title": "Three audiences",
+        "body": "| | Audience | Value |\n|---|---|---|\n| A1 | **Readers** | Short answers. |\n| A2 | **Writers** | Every word, citable. |\n| A3 | **Editors** | A correction path. |"
+      }
+    },
+    {
+      "template": "normal",
+      "content": {
+        "title": "Table then text",
+        "body": "| Option | Owner | Question |\n|---|---|---|\n| One | A1 | Is it useful? |\n| Two | — | Who decides? |\n\nNothing is chosen yet."
+      }
+    }
+  ]
+}

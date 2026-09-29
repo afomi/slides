@@ -1,0 +1,27 @@
+[
+  {
+    "type": "title",
+    "title": "Legacy format",
+    "subtitle": "Top-level fields, no content object"
+  },
+  {
+    "type": "section",
+    "heading": "A section"
+  },
+  {
+    "type": "normal",
+    "title": "Points",
+    "content": "- First\n- *Second* with `code`\n- **Third**"
+  },
+  {
+    "type": "two_column",
+    "title": "Compare",
+    "left": "**Before**\n- One",
+    "right": "**After**\n- Two"
+  },
+  {
+    "type": "full_image",
+    "image": "assets/fixture/dot.png",
+    "title": "A caption"
+  }
+]

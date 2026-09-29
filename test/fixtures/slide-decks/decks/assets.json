@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "deck": {
+    "title": "Assets fixture"
+  },
+  "brand": "civic-studio",
+  "slides": [
+    {
+      "template": "content_image",
+      "content": {
+        "title": "Image from the decks repo",
+        "body": "- Resolved from assets/",
+        "image": "assets/fixture/dot.png"
+      }
+    }
+  ]
+}
