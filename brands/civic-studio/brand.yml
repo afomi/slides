@@ -1,0 +1,29 @@
+# Civic Studio house brand.
+# Source: ~/workspace/civic-studio-website/CLAUDE.md § Brand Colors, and its Tailwind --font-* tokens.
+# Keys under theme: are CSS variables from templates/styles.css :root (primary_color -> --primary-color).
+name: Civic Studio
+description: Civic Studio house style — white ground, dark-teal headings, light-teal accent, Public Sans, stamp logo.
+
+fonts:
+  - https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap
+
+logo: logo.png
+mark: Civic Studio
+
+theme:
+  primary_color: "#04455b"
+  secondary_color: "#475569"
+  accent_color: "#86ebe9"
+  background_color: "#ffffff"
+  text_color: "#1e293b"
+  text_light: "#64748b"
+  title_gradient_end: "#021f29"
+  font_family: "'Public Sans', 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+  font_mono: "'JetBrains Mono', SFMono-Regular, Menlo, monospace"
+  title_weight: "300"
+  subtitle_weight: "300"
+  heading_weight: "600"
+  title_rule_width: "160px"
+  title_rule_height: "8px"
+  title_rule_gap: "48px"
+  padding: "88px"

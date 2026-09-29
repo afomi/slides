@@ -1,0 +1,257 @@
+authoring:
+  canonical_template_language: html
+  export_formats:
+    - png
+    - pdf
+  prompt_rules:
+    - Author the message first, then choose the lightest template that fits it.
+    - Keep content inside the supported fields for each template; do not invent new regions.
+    - If a slide will overflow, split it into two slides or choose a denser template.
+    - Prefer PDF for deck distribution and PNG for image pipelines or thumbnails.
+
+canvas:
+  width: 1920
+  height: 1080
+  aspect_ratio: "16:9"
+
+social_formats:
+  twitter:
+    width: 1200
+    height: 630
+    description: "Twitter/X card image"
+  linkedin:
+    width: 1200
+    height: 627
+    description: "LinkedIn post image"
+  og:
+    width: 1200
+    height: 630
+    description: "Open Graph preview image"
+  square:
+    width: 1080
+    height: 1080
+    description: "Instagram / general square format"
+
+templates:
+  title:
+    label: Title
+    description: Centered cover slide with a dominant title and optional subtitle.
+    required_fields:
+      - title
+    optional_fields:
+      - subtitle
+    field_aliases:
+      title:
+        - title
+      subtitle:
+        - subtitle
+    best_for:
+      - opening slide
+      - closing slide
+      - single thesis statement
+    constraints:
+      - Keep the title to roughly 10 words or fewer.
+      - Prefer a subtitle that fits in one short sentence.
+    regions:
+      title:
+        description: Centered headline area occupying the visual middle of the slide.
+        x: 0.15
+        y: 0.28
+        width: 0.70
+        height: 0.18
+      subtitle:
+        description: Centered support line below the title.
+        x: 0.18
+        y: 0.56
+        width: 0.64
+        height: 0.10
+
+  section:
+    label: Section
+    description: Section divider with one large heading.
+    required_fields:
+      - heading
+    optional_fields: []
+    field_aliases:
+      heading:
+        - heading
+        - title
+    best_for:
+      - chapter break
+      - topic transition
+    constraints:
+      - Use a short phrase, not a sentence.
+    regions:
+      heading:
+        description: Large centered section label.
+        x: 0.18
+        y: 0.38
+        width: 0.64
+        height: 0.14
+
+  normal:
+    label: Normal
+    description: Title plus one flowing body column for bullets or short paragraphs.
+    required_fields:
+      - title
+      - content
+    optional_fields: []
+    field_aliases:
+      title:
+        - title
+      content:
+        - content
+        - body
+        - bullets
+    best_for:
+      - key points
+      - explanation
+      - process slide
+    constraints:
+      - Aim for 3 to 6 bullets or under 80 words.
+      - Avoid long paragraphs; this format is still presentation-first.
+    regions:
+      title:
+        description: Top-left title bar.
+        x: 0.08
+        y: 0.08
+        width: 0.72
+        height: 0.10
+      content:
+        description: Main single-column content area below the title.
+        x: 0.08
+        y: 0.22
+        width: 0.80
+        height: 0.60
+
+  two_column:
+    label: Two Column
+    description: Title plus two equal columns for comparisons or paired lists.
+    required_fields:
+      - title
+      - left
+      - right
+    optional_fields: []
+    field_aliases:
+      title:
+        - title
+      left:
+        - left
+        - left_body
+        - left_content
+      right:
+        - right
+        - right_body
+        - right_content
+    best_for:
+      - comparison
+      - before and after
+      - pros and cons
+    constraints:
+      - Keep both columns balanced in length.
+      - Use short bullets rather than dense prose.
+    regions:
+      title:
+        description: Title spanning the top row.
+        x: 0.08
+        y: 0.08
+        width: 0.80
+        height: 0.10
+      left:
+        description: Left comparison column.
+        x: 0.08
+        y: 0.22
+        width: 0.38
+        height: 0.60
+      right:
+        description: Right comparison column.
+        x: 0.54
+        y: 0.22
+        width: 0.38
+        height: 0.60
+
+  content_image:
+    label: Content + Image
+    description: Title plus left text column and right image column.
+    required_fields:
+      - title
+      - content
+      - image
+    optional_fields:
+      - image_prompt
+    field_aliases:
+      title:
+        - title
+      content:
+        - content
+        - body
+        - bullets
+      image:
+        - image
+        - primary_image
+      image_prompt:
+        - image_prompt
+    best_for:
+      - project card
+      - product showcase
+      - feature highlight with visual
+    constraints:
+      - Keep text to 3-5 bullets or a short paragraph.
+      - Image should work at a 1:1-ish aspect ratio in the right column.
+    regions:
+      title:
+        description: Top-left title bar spanning the full width.
+        x: 0.08
+        y: 0.08
+        width: 0.80
+        height: 0.10
+      content:
+        description: Left text column below the title.
+        x: 0.08
+        y: 0.22
+        width: 0.38
+        height: 0.60
+      image:
+        description: Right image column below the title.
+        x: 0.54
+        y: 0.22
+        width: 0.38
+        height: 0.60
+
+  full_image:
+    label: Full Image
+    description: Full-bleed image with optional bottom caption.
+    required_fields:
+      - image
+    optional_fields:
+      - title
+      - image_prompt
+    field_aliases:
+      image:
+        - image
+        - primary_image
+      title:
+        - title
+        - caption
+      image_prompt:
+        - image_prompt
+    best_for:
+      - photographic interlude
+      - product shot
+      - visual punch slide
+    constraints:
+      - Use an image that can survive edge cropping.
+      - Keep any caption short and secondary to the visual.
+    regions:
+      image:
+        description: Full-bleed image covering the entire slide.
+        x: 0.00
+        y: 0.00
+        width: 1.00
+        height: 1.00
+      title:
+        description: Optional dark caption bar pinned to the bottom edge.
+        x: 0.00
+        y: 0.82
+        width: 1.00
+        height: 0.18

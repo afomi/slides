@@ -1,0 +1,11 @@
+# Qart product brand. Extracted from decks/qart-yc.yml.
+name: Qart
+description: Qart product brand — near-black ground, orange primary, green accent, light text.
+
+theme:
+  primary_color: "#FD4F00"
+  secondary_color: "#171717"
+  accent_color: "#059669"
+  background_color: "#0A0A0A"
+  text_color: "#FAFAFA"
+  padding: "88px"

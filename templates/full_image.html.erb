@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta
+    charset="UTF-8"
+  >
+  <style><%= styles %></style>
+</head>
+<body>
+  <div
+    class="slide full_image"
+  >
+    <img
+      src="<%= slide[:image] %>"
+      alt=""
+    >
+    <% if slide[:title] %>
+      <div
+        class="caption"
+      ><%= slide[:title] %></div>
+    <% end %>
+    <%= brand_mark %>
+    <div
+      class="slide-number"
+    ><%= slide_number %></div>
+  </div>
+</body>
+</html>

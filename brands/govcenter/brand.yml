@@ -1,0 +1,39 @@
+# GovCenter product brand.
+# Source: ~/workspace/gov_center/CLAUDE.md § Design Direction, and docs/BRAND.md.
+# Dark, dense, fast. Near-black ground, red signal with a top-left glow, gold highlights,
+# Barlow Condensed 900 italic display over Inter body, hard corners.
+name: GovCenter
+description: GovCenter product brand — near-black ground, red signal glow, gold accent, Barlow Condensed italic display, Inter body, hard corners.
+
+fonts:
+  - https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700;1,900&family=Inter:wght@400;600;800&display=swap
+
+mark: GovCenter  # tagline stays off the mark: MESSAGING.md limits it to canonical placements
+
+theme:
+  primary_color: "#f03a3a"
+  secondary_color: "#aeb6c7"
+  accent_color: "#ffc72c"
+  background_color: "#07080b"
+  text_color: "#f6f7fb"
+  text_light: "#697387"
+  on_primary_color: "#f6f7fb"
+  on_primary_muted: "#aeb6c7"
+  title_background: "radial-gradient(circle at 0% 0%, rgba(240, 58, 58, 0.45) 0%, #07080b 60%)"
+  code_background: "#171b24"
+  table_rule_color: "#232a36"
+  font_family: "'Inter', 'Helvetica Neue', Arial, sans-serif"
+  heading_font_family: "'Barlow Condensed', 'Inter', sans-serif"
+  title_weight: "900"
+  subtitle_weight: "400"
+  heading_weight: "900"
+  heading_font_style: italic
+  title_size: "144px"
+  heading_size: "112px"
+  subheading_size: "64px"
+  title_rule_width: "160px"
+  title_rule_height: "8px"
+  title_rule_gap: "40px"
+  border_width: "8px"
+  code_radius: "0px"
+  padding: "88px"

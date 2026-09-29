@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta
+    charset="UTF-8"
+  >
+  <style><%= styles %></style>
+</head>
+<body>
+  <div
+    class="slide two_column"
+  >
+    <% if slide[:title] %>
+      <h2><%= slide[:title] %></h2>
+    <% end %>
+    <div
+      class="columns"
+    >
+      <div
+        class="column"
+      >
+        <%= markdown(slide[:left]) %>
+      </div>
+      <div
+        class="column"
+      >
+        <%= markdown(slide[:right]) %>
+      </div>
+    </div>
+    <%= brand_mark %>
+    <div
+      class="slide-number"
+    ><%= slide_number %></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Neutral slate-and-teal look shared by civil_registry and fomgl_ledger.
+# Extracted verbatim from their inline themes; renders are byte-identical to before.
+name: Slate
+description: Neutral slate headings on off-white with a teal accent, system fonts, no mark. Sober, client-agnostic.
+
+theme:
+  primary_color: "#1e293b"
+  secondary_color: "#475569"
+  accent_color: "#0d9488"
+  background_color: "#f8fafc"
+  text_color: "#0f172a"
+  padding: "88px"
