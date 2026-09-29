@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+>
+<head>
+  <meta
+    charset="UTF-8"
+  >
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+  <title>Slide Editor</title>
+  <link
+    rel="stylesheet"
+    href="css/editor.css"
+  >
+</head>
+<body>
+  <header
+    class="topbar"
+  >
+    <div
+      class="brand-title"
+    >Slides</div>
+    <button
+      id="open-folder"
+      type="button"
+      class="primary"
+    >Open decks folder</button>
+    <label
+      id="open-file-label"
+      class="button"
+      hidden
+    >
+      Open deck file
+      <input
+        id="open-file"
+        type="file"
+        accept=".json,application/json"
+        hidden
+      >
+    </label>
+    <select
+      id="deck-select"
+      aria-label="Deck"
+      disabled
+    ></select>
+    <button
+      id="new-deck"
+      type="button"
+      disabled
+    >New deck</button>
+    <label
+      class="inline"
+    >
+      Brand
+      <select
+        id="brand-select"
+        aria-label="Brand"
+        disabled
+      ></select>
+    </label>
+    <span
+      id="status"
+      class="status"
+      role="status"
+    ></span>
+    <button
+      id="save"
+      type="button"
+      class="primary"
+      disabled
+      title="Save (⌘S / Ctrl+S)"
+    >Save</button>
+  </header>
+
+  <main
+    class="workspace"
+  >
+    <aside
+      class="slide-list-panel"
+    >
+      <ol
+        id="slide-list"
+        class="slide-list"
+      ></ol>
+      <div
+        class="add-slide"
+      >
+        <select
+          id="add-template"
+          aria-label="Template for new slide"
+          disabled
+        ></select>
+        <button
+          id="add-slide"
+          type="button"
+          disabled
+        >Add slide</button>
+      </div>
+    </aside>
+
+    <section
+      class="stage"
+    >
+      <div
+        id="welcome"
+        class="welcome"
+      >
+        <h1>Slide editor</h1>
+        <p>Decks are JSON files; this page edits them in place.</p>
+        <p>Open your <code>slide-decks</code> folder to edit its <code>decks/*.json</code> on disk, the same files your IDE and git see.</p>
+        <p
+          id="no-fs-note"
+          hidden
+        >This browser cannot write to local folders, so open a single deck file and saving downloads it.
+        Chrome, Edge, and Arc can edit the folder directly.</p>
+        <button
+          id="try-sample"
+          type="button"
+        >Try a sample deck</button>
+      </div>
+      <div
+        id="preview-frame"
+        class="preview-frame"
+        hidden
+      >
+        <iframe
+          id="preview"
+          title="Slide preview"
+          width="1920"
+          height="1080"
+        ></iframe>
+      </div>
+      <ul
+        id="warnings"
+        class="warnings"
+      ></ul>
+    </section>
+
+    <aside
+      id="inspector"
+      class="inspector"
+      hidden
+    >
+      <h2>Slide</h2>
+      <label>
+        Template
+        <select
+          id="template-select"
+        ></select>
+      </label>
+      <p
+        id="template-help"
+        class="help"
+      ></p>
+      <div
+        id="fields"
+      ></div>
+    </aside>
+  </main>
+
+  <section
+    id="drawer"
+    class="drawer"
+    hidden
+  >
+    <div
+      id="drawer-handle"
+      class="drawer-handle"
+      title="Drag to resize"
+    ></div>
+    <div
+      class="drawer-bar"
+    >
+      <div
+        id="drawer-tabs"
+        class="drawer-tabs"
+        role="tablist"
+      ></div>
+      <span
+        class="help"
+      >Markdown: <code>- bullet</code> <code>**bold**</code> <code>*em*</code> <code>`code`</code> <code>| table |</code></span>
+      <button
+        id="drawer-close"
+        type="button"
+        title="Close (Ctrl+`)"
+      >Close</button>
+    </div>
+    <textarea
+      id="drawer-text"
+      spellcheck="true"
+      aria-label="Markdown"
+    ></textarea>
+    <p
+      id="drawer-error"
+      class="error"
+    ></p>
+  </section>
+
+  <button
+    id="drawer-toggle"
+    type="button"
+    class="drawer-toggle"
+    disabled
+    title="Toggle Markdown drawer (Ctrl+`)"
+  >Markdown</button>
+
+  <script
+    src="js/engine-data.js"
+  ></script>
+  <script
+    src="js/engine-core.js"
+  ></script>
+  <script
+    src="js/measure.js"
+  ></script>
+  <script
+    src="js/editor.js"
+  ></script>
+</body>
+</html>
