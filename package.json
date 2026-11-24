@@ -2,6 +2,6 @@
   "name": "slides",
   "private": true,
   "dependencies": {
-    "puppeteer": "^23.0.0"
+    "puppeteer": "^25.18.1"
   }
 }
